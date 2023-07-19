@@ -50,7 +50,10 @@ const Model = (() => {
 })();
 
 const View = (() => {
-	return {};
+    const init = ((params) => {
+        
+    })()
+	return {init};
 })();
 
 const Controller = (() => {
@@ -58,6 +61,7 @@ const Controller = (() => {
 })();
 
 Model.init();
+console.log(Model.player1.getPlayedSpot());
 
 /* Model:
 ----------
