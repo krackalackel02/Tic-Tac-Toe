@@ -19,74 +19,58 @@ const Model = (() => {
 	})();
 
 	const playerFactory = () => {
-		let playedSpot;
-		playedSpot = [];
+		let playedSpot = [];
 		const getPlayedSpot = () => playedSpot;
 		const play = (position) => {
-			let avail = Model.gameBoard.getAvailSpot();
+			let avail = gameBoard.getAvailSpot(); // No need to use Model.gameBoard here
 			let index = avail.indexOf(position);
 			if (index !== -1) {
 				avail.splice(index, 1);
-				Model.gameBoard.setAvailSpot(avail);
+				gameBoard.setAvailSpot(avail); // No need to use Model.gameBoard here
 				playedSpot.push(position);
+				return true;
 			} else {
 				console.log(
 					"Invalid move. Position is already taken or doesn't exist."
 				);
+				return false;
 			}
 		};
 		return { getPlayedSpot, play };
 	};
 
-	const init = () => {
+	let player1;
+	let player2;
+
+	const init = function () {
+		// Change to a regular function expression
 		gameBoard.init();
-		const player1 = playerFactory();
-		const player2 = playerFactory();
+		this.player1 = playerFactory(); // 'this' will refer to the 'Model' object
+		this.player2 = playerFactory(); // 'this' will refer to the 'Model' object
 		// You can now use player1 and player2 as needed within the Model module.
-		return { gameBoard, player1, player2 }; // Return the objects as properties of Model.
 	};
+
 	// Include the 'gameBoard' module in the returned object.
-	return { init, gameBoard };
+	return { init, gameBoard, player1, player2 };
 })();
 
 const View = (() => {
-	const init = ((params) => {})();
+	const init = () => {
+		// Select the SVG elements with the class "svg" and hide them on page load
+		const svgElements = document.querySelectorAll(".gridMarker");
+		for (const marker of svgElements) {
+			marker.classList.add("d-none");
+		}
+	};
 	return { init };
 })();
 
 const Controller = (() => {
-	return {};
+	const init = () => {
+		View.init();
+		Model.init();
+	};
+	return { init };
 })();
 
-const modelInstance = Model.init(); // Initialize the Model and get the returned objects.
-const player1 = modelInstance.player1; // Access player1 from the Model instance.
-const player2 = modelInstance.player2; // Access player2 from the Model instance.
-
-
-/* Model:
-----------
-The Model represents the data and business logic of the application. It is responsible for managing the data and providing methods to access, modify, and update it. Common methods in the Model include:
-
-getData(): Retrieve data from the Model.
-setData(data): Set or update the data in the Model.
-updateData(data): Update specific data elements in the Model.
-saveData(): Persist data changes (e.g., saving to a database).
-deleteData(): Delete data from the Model.
--------
-View:
-The View is responsible for displaying the data to the user and presenting the user interface. It should have methods to render the data and respond to user input events. Common methods in the View include:
-render(data): Display the data on the user interface.
-
-updateView(data): Update the View with new data.
-showLoading(): Display a loading indicator or message.
-showError(message): Display an error message.
-Event handling methods: These methods are responsible for responding to user interactions, such as button clicks, form submissions, etc.
----------
-Controller:
-The Controller acts as an intermediary between the Model and the View. It handles user input, processes the data, and updates both the Model and the View accordingly. Common methods in the Controller include:
-handleRequest(request): Process user input and delegate actions to the Model or View.
-
-updateModel(data): Update the Model based on user input or changes from the View.
-updateView(data): Update the View based on changes in the Model.
-initialize(): Initialize the Controller, set up event listeners, etc.
-destroy(): Clean up resources and event listeners when the Controller is longer needed. */
+export { Model, View, Controller };
