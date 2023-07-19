@@ -23,6 +23,7 @@
 		></script>
 		<script src="script.js" type="module"></script>
 	</head>
+
 	<body>
 		<div class="container">
 			<header
@@ -35,7 +36,7 @@
 					<svg class="bi me-2" width="60" height="60">
 						<use xlink:href="./tic-tac-toe-game.svg#Capa_1"></use>
 					</svg>
-					<h1 class="d-inline-block display-1 fw-bold px-5">Tic - Tac - Toe</h1>
+					<h1 class="d-inline-block display-1 fw-bold">Tic - Tac - Toe</h1>
 					<svg class="bi me-2" width="60" height="60">
 						<use xlink:href="./tic-tac-toe-game.svg#Capa_1"></use>
 					</svg>
@@ -43,62 +44,97 @@
 			</header>
 			<div class="container mb-5">
 				<div
-					class="row p-4 pb-0 pe-lg-0 pt-lg-5 align-items-center rounded-3 border shadow-lg"
+					class="game row p-4 pb-0 pe-lg-0 pt-lg-5 align-items-center justify-content-center rounded-3 border shadow-lg"
 				>
 					<div
-						class="w-100 ratio p-0 ratio-1x1 bg-dark mb-3 text-white rounded"
+						class="w-75 ratio p-0 ratio-1x1 bg-dark mb-3 text-white rounded d-flex justify-content-center"
 					>
 						<div class="row m-0 p-0">
 							<div
 								class="col-4 border-5 d-flex justify-content-center align-items-center text-center border-white border border-start-0 border-top-0"
 							>
-								Content 1
+								<svg id="r1c1" class="w-75 d-none ratio ratio-1x1 h-auto">
+									<use xlink:href="./cross-46.svg#cross"></use>
+								</svg>
 							</div>
 							<div
 								class="col-4 border-5 d-flex justify-content-center align-items-center text-center border-white border border-top-0"
 							>
-								Content 2
+								<svg id="r1c2" class="w-75 d-none ratio ratio-1x1 h-auto">
+									<use xlink:href="./cross-46.svg#cross"></use>
+								</svg>
 							</div>
 							<div
 								class="col-4 border-5 d-flex justify-content-center align-items-center text-center border-white border border-end-0 border-top-0"
 							>
-								Content 3
+								<svg id="r1c3" class="w-75 d-none ratio ratio-1x1 h-auto">
+									<use xlink:href="./cross-46.svg#cross"></use>
+								</svg>
 							</div>
 
 							<div
 								class="col-4 border-5 d-flex justify-content-center align-items-center text-center border-white border border-start-0"
 							>
-								Content 4
+								<svg id="r2c1" class="w-75 d-none ratio ratio-1x1 h-auto">
+									<use xlink:href="./cross-46.svg#cross"></use>
+								</svg>
 							</div>
 							<div
 								class="col-4 border-5 d-flex justify-content-center align-items-center text-center border-white border"
 							>
-								Content 5
+								<svg id="r2c2" class="w-75 d-none ratio ratio-1x1 h-auto">
+									<use xlink:href="./cross-46.svg#cross"></use>
+								</svg>
 							</div>
 							<div
 								class="col-4 border-5 d-flex justify-content-center align-items-center text-center border-white border border-end-0"
 							>
-								Content 6
+								<svg id="r2c3" class="w-75 d-none ratio ratio-1x1 h-auto">
+									<use xlink:href="./cross-46.svg#cross"></use>
+								</svg>
 							</div>
 
 							<div
 								class="col-4 border-5 d-flex justify-content-center align-items-center text-center border-white border border-start-0 border-bottom-0"
 							>
-								Content 7
+								<svg id="r3c1" class="w-75 d-none ratio ratio-1x1 h-auto">
+									<use xlink:href="./cross-46.svg#cross"></use>
+								</svg>
 							</div>
 							<div
 								class="col-4 border-5 d-flex justify-content-center align-items-center text-center border-white border border-bottom-0"
 							>
-								Content 8
+								<svg id="r3c2" class="w-75 d-none ratio ratio-1x1 h-auto">
+									<use xlink:href="./cross-46.svg#cross"></use>
+								</svg>
 							</div>
 							<div
 								class="col-4 border-5 d-flex justify-content-center align-items-center text-center border-white border border-end-0 border-bottom-0"
 							>
-								Content 9
+								<svg id="r3c3" class="w-75 d-none ratio ratio-1x1 h-auto">
+									<use xlink:href="./cross-46.svg#cross"></use>
+								</svg>
 							</div>
 						</div>
 					</div>
 
+					<div class="d-grid gap-2 d-flex justify-content-center mb-3">
+						<div class="form-group d-flex flex-column align-items-center">
+							<label for="exampleFormControlSelect1">Your Marker</label>
+							<select class="form-control-lg text-center">
+								<option>X</option>
+								<option>O</option>
+							</select>
+						</div>
+						<div class="form-group d-flex flex-column align-items-center">
+							<label for="exampleFormControlSelect1">Difficulty</label>
+							<select class="form-control-lg text-center">
+								<option>Easy</option>
+								<option>Medium</option>
+								<option>Unbeatable</option>
+							</select>
+						</div>
+					</div>
 					<div class="d-grid gap-2 d-sm-flex justify-content-sm-center mb-3">
 						<button type="button" class="btn btn-danger btn-lg px-4 gap-3">
 							Reset Game
@@ -106,21 +142,6 @@
 						<button type="button" class="btn btn-success btn-lg px-4 gap-3">
 							Play Now
 						</button>
-						<div class="form-group d-flex flex-column align-items-center">
-							<label for="exampleFormControlSelect1">Your Marker</label>
-							<select class="form-control-lg">
-								<option>X</option>
-								<option>O</option>
-							</select>
-						</div>
-						<div class="form-group d-flex flex-column align-items-center">
-							<label for="exampleFormControlSelect1">Difficulty</label>
-							<select class="form-control-lg">
-								<option>Easy</option>
-								<option>Medium</option>
-								<option>Unbeatable</option>
-							</select>
-						</div>
 					</div>
 				</div>
 			</div>

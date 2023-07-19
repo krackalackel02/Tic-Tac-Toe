@@ -1,19 +1,63 @@
-const Model = ((params) => {
-    const playerFactory = () => {
-        return {}
-    }
-    const player1 = playerFactory()
-    const player2 = playerFactory()
+const Model = (() => {
+	const gameBoard = (() => {
+		let availSpot;
 
-    return {getData,setData,updateData,saveData,deleteData}
-})()
+		const init = () => {
+			availSpot = [];
+			for (let i = 1; i < 4; i++) {
+				for (let j = 1; j < 4; j++) {
+					availSpot.push(`r${i}c${j}`);
+				}
+			}
+		};
+
+		const getAvailSpot = () => availSpot;
+		const setAvailSpot = (avail) => (availSpot = avail);
+
+		// Include the 'play' function in the returned object.
+		return { init, getAvailSpot, setAvailSpot };
+	})();
+
+	const init = () => {
+		gameBoard.init();
+	};
+
+	const playerFactory = () => {
+		let playedSpot;
+		playedSpot = [];
+		const getPlayedSpot = () => playedSpot;
+		const play = (position) => {
+			let avail = Model.gameBoard.getAvailSpot();
+			let index = avail.indexOf(position);
+			if (index !== -1) {
+				avail.splice(index, 1);
+				Model.gameBoard.setAvailSpot(avail);
+				playedSpot.push(position);
+			} else {
+				console.log(
+					"Invalid move. Position is already taken or doesn't exist."
+				);
+			}
+		};
+		return { getPlayedSpot, play };
+	};
+
+	const player1 = playerFactory();
+	const player2 = playerFactory();
+
+	// Include the 'gameBoard' module in the returned object.
+	return { init, gameBoard, player1, player2 };
+})();
+
 const View = (() => {
-    return {render,updateView,showLoading,showError}
-})()
-const Controller = ((params) => {
-    return{handleRequest,updateModel,updateView,initialise,destroy}
-})()
+	return {};
+})();
 
+const Controller = (() => {
+	return {};
+})();
+
+Model.init();
 
 /* Model:
 ----------
