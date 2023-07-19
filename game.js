@@ -18,10 +18,6 @@ const Model = (() => {
 		return { init, getAvailSpot, setAvailSpot };
 	})();
 
-	const init = () => {
-		gameBoard.init();
-	};
-
 	const playerFactory = () => {
 		let playedSpot;
 		playedSpot = [];
@@ -42,26 +38,30 @@ const Model = (() => {
 		return { getPlayedSpot, play };
 	};
 
-	const player1 = playerFactory();
-	const player2 = playerFactory();
-
+	const init = () => {
+		gameBoard.init();
+		const player1 = playerFactory();
+		const player2 = playerFactory();
+		// You can now use player1 and player2 as needed within the Model module.
+		return { gameBoard, player1, player2 }; // Return the objects as properties of Model.
+	};
 	// Include the 'gameBoard' module in the returned object.
-	return { init, gameBoard, player1, player2 };
+	return { init, gameBoard };
 })();
 
 const View = (() => {
-    const init = ((params) => {
-        
-    })()
-	return {init};
+	const init = ((params) => {})();
+	return { init };
 })();
 
 const Controller = (() => {
 	return {};
 })();
 
-Model.init();
-console.log(Model.player1.getPlayedSpot());
+const modelInstance = Model.init(); // Initialize the Model and get the returned objects.
+const player1 = modelInstance.player1; // Access player1 from the Model instance.
+const player2 = modelInstance.player2; // Access player2 from the Model instance.
+
 
 /* Model:
 ----------
