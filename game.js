@@ -29,9 +29,6 @@ const Model = (() => {
 				playedSpot.push(position);
 				return true;
 			} else {
-				console.log(
-					"Invalid move. Position is already taken or doesn't exist."
-				);
 				return false;
 			}
 		};
@@ -98,8 +95,9 @@ const Model = (() => {
 		this.player2.play(position);
 		View.setMarker(document.getElementById(position), this.player2.marker);
 	};
+	const minimaxAI = (params) => {};
 	// Include the 'gameBoard' module in the returned object.
-	return { init, gameBoard, player1, player2, randomAI };
+	return { init, gameBoard, player1, player2, randomAI, minimaxAI };
 })();
 
 const View = (() => {
@@ -162,9 +160,19 @@ const Controller = (() => {
 			View.setMarker(clickedIcon.querySelector("svg"), Model.player1.marker);
 			Model.player1.play(clickedPosition);
 			Controller.checkForGame();
-			console.log(Model.player1.winner);
 			if (Model.player1.winner !== true && Model.player2.winner !== true) {
-				Model.randomAI();
+				switch (View.difficulty.value) {
+					case "Random":
+						Model.randomAI();
+
+						break;
+					case "Unbeatable":
+						Model.minimaxAI();
+						break;
+
+					default:
+						break;
+				}
 			}
 		}
 		let game = Controller.checkForGame();
@@ -201,8 +209,6 @@ const Controller = (() => {
 		Model.player1.marker == "X"
 			? (Model.player2.marker = "O")
 			: (Model.player2.marker = "X");
-		console.log("Player 1: ", Model.player1.marker);
-		console.log("Player 2: ", Model.player2.marker);
 		View.marker.disabled = true;
 		View.difficulty.disabled = true;
 	};
