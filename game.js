@@ -17,7 +17,7 @@ const Model = (() => {
 		return { init, getAvailSpot, setAvailSpot };
 	})();
 
-	const playerFactory = () => {
+	const playerFactory = function () {
 		let playedSpot = [];
 		const getPlayedSpot = () => playedSpot;
 		const play = (position) => {
@@ -70,7 +70,14 @@ const Model = (() => {
 			);
 		};
 
-		return { getPlayedSpot, play, checkForCol, checkForDiag, checkForRow };
+		return {
+			getPlayedSpot,
+			play,
+			checkForCol,
+			checkForDiag,
+			checkForRow,
+			winner: false,
+		};
 	};
 
 	let player1;
@@ -135,7 +142,7 @@ const Controller = (() => {
 		Model.init();
 	};
 	const handlePosition = function (clickedPosition) {
-		if (Model.gameWon) return false;
+		if (Controller.checkForGame() != "no") return false;
 		if (Model.gameBoard.getAvailSpot().includes(clickedPosition)) {
 			return true;
 		} else {
@@ -152,9 +159,13 @@ const Controller = (() => {
 				View.marker.disabled == false
 			)
 				return;
-			Model.player1.play(clickedPosition);
 			View.setMarker(clickedIcon.querySelector("svg"), Model.player1.marker);
-			Model.randomAI();
+			Model.player1.play(clickedPosition);
+			Controller.checkForGame();
+			console.log(Model.player1.winner);
+			if (Model.player1.winner !== true && Model.player2.winner !== true) {
+				Model.randomAI();
+			}
 		}
 		let game = Controller.checkForGame();
 		switch (game) {
