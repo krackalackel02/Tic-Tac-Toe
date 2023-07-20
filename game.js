@@ -35,35 +35,76 @@ const Model = (() => {
 				return false;
 			}
 		};
-		return { getPlayedSpot, play };
+		const checkForCol = function () {
+			let winPattern = [
+				["r1c1", "r2c1", "r3c1"],
+				["r1c2", "r2c2", "r3c2"],
+				["r1c3", "r2c3", "r3c3"],
+			];
+
+			return winPattern.some((pattern) =>
+				pattern.every((position) => playedSpot.includes(position))
+			);
+		};
+
+		const checkForRow = function () {
+			let winPattern = [
+				["r1c1", "r1c2", "r1c3"],
+				["r2c1", "r2c2", "r2c3"],
+				["r3c1", "r3c2", "r3c3"],
+			];
+
+			return winPattern.some((pattern) =>
+				pattern.every((position) => playedSpot.includes(position))
+			);
+		};
+
+		const checkForDiag = function () {
+			let winPattern = [
+				["r1c1", "r2c2", "r3c3"],
+				["r3c1", "r2c2", "r1c3"],
+			];
+
+			return winPattern.some((pattern) =>
+				pattern.every((position) => playedSpot.includes(position))
+			);
+		};
+
+		return { getPlayedSpot, play, checkForCol, checkForDiag, checkForRow };
 	};
 
 	let player1;
 	let player2;
-	let gameWon;
 
 	const init = function () {
 		// Change to a regular function expression
 		gameBoard.init();
-		gameWon = false;
 		this.player1 = playerFactory(); // 'this' will refer to the 'Model' object
 		this.player2 = playerFactory(); // 'this' will refer to the 'Model' object
 		// You can now use player1 and player2 as needed within the Model module.
 	};
-
+	const randomAI = function () {
+		let length = this.gameBoard.getAvailSpot().length;
+		if (length == 0) return;
+		let position =
+			this.gameBoard.getAvailSpot()[Math.floor(Math.random() * length)];
+		this.player2.play(position);
+		View.setMarker(document.getElementById(position), this.player2.marker);
+	};
 	// Include the 'gameBoard' module in the returned object.
-	return { init, gameBoard, player1, player2 };
+	return { init, gameBoard, player1, player2, randomAI };
 })();
 
 const View = (() => {
 	const playButton = document.getElementById("playButton");
 	const resetButton = document.getElementById("resetButton");
 	const marker = document.getElementById("marker");
+	const difficulty = document.getElementById("difficulty");
 
 	const init = function () {
 		// Select the SVG elements with the class "svg" and hide them on page load
-		const svgElements = document.querySelectorAll(".gridMarker");
-		for (const marker of svgElements) {
+		this.svgElements = document.querySelectorAll(".gridMarker");
+		for (const marker of this.svgElements) {
 			marker.querySelector("svg").classList.add("d-none");
 			marker.addEventListener("click", Controller.handleClick);
 		}
@@ -79,14 +120,13 @@ const View = (() => {
 			case "O":
 				svg = "circle-ring.svg#ring";
 				break;
-            default :
-                return
-                
+			default:
+				return;
 		}
 		clickedIcon.querySelector("use").setAttribute("xlink:href", svg);
 		clickedIcon.classList.remove("d-none");
 	};
-	return { init, setMarker, playButton, resetButton, marker };
+	return { init, setMarker, playButton, resetButton, marker, difficulty };
 })();
 
 const Controller = (() => {
@@ -96,15 +136,54 @@ const Controller = (() => {
 	};
 	const handlePosition = function (clickedPosition) {
 		if (Model.gameWon) return false;
-		return true;
+		if (Model.gameBoard.getAvailSpot().includes(clickedPosition)) {
+			return true;
+		} else {
+			alert("Invalid move. Position is already taken or doesn't exist.");
+			return false;
+		}
 	};
 	const handleClick = function (e) {
-		let clickedIcon = e.target;
-		let clickedPosition = e.target.querySelector("svg").id;
+		let clickedIcon = e.target.closest(".gridMarker");
+		let clickedPosition = clickedIcon.querySelector("svg").id;
 		if (Controller.handlePosition(clickedPosition)) {
+			if (
+				!View.marker.hasAttribute("disabled") ||
+				View.marker.disabled == false
+			)
+				return;
+			Model.player1.play(clickedPosition);
 			View.setMarker(clickedIcon.querySelector("svg"), Model.player1.marker);
+			Model.randomAI();
 		}
-		Model.gameWon ? alert("You Won!") : undefined;
+		let game = Controller.checkForGame();
+		switch (game) {
+			case "win":
+				let winner;
+				if (Model.player1.winner) {
+					winner = "Player 1";
+				} else if (Model.player2.winner) {
+					winner = "Player 2";
+				}
+
+				alert(`${winner} won the game!`);
+				for (const marker of View.svgElements) {
+					marker.removeEventListener("click", Controller.handleClick);
+				}
+
+				break;
+
+			case "draw":
+				alert("The game is a draw");
+				for (const marker of View.svgElements) {
+					marker.removeEventListener("click", Controller.handleClick);
+				}
+				break;
+
+			case "no":
+			default:
+				break;
+		}
 	};
 	const handlePlay = function (e) {
 		Model.player1.marker = View.marker.options[View.marker.selectedIndex].value;
@@ -113,11 +192,39 @@ const Controller = (() => {
 			: (Model.player2.marker = "X");
 		console.log("Player 1: ", Model.player1.marker);
 		console.log("Player 2: ", Model.player2.marker);
+		View.marker.disabled = true;
+		View.difficulty.disabled = true;
 	};
 	const handleReset = function (e) {
-		Controller.init()
+		Controller.init();
+		View.marker.disabled = false;
+		View.difficulty.disabled = false;
 	};
-	return { init, handlePosition, handleClick, handleReset,handlePlay };
+	const checkForGame = function () {
+		const players = [Model.player1, Model.player2];
+		players.forEach((player) => {
+			if (player.checkForRow()) player.winner = true;
+			if (player.checkForCol()) player.winner = true;
+			if (player.checkForDiag()) player.winner = true;
+			if (Model.gameBoard.getAvailSpot().length == 0) {
+				player.draw = true;
+			}
+		});
+		const anyPlayerWon = players.some((player) => player.winner === true);
+		const anyPlayerdraw = players.some((player) => player.draw === true);
+		if (anyPlayerWon) return "win";
+		if (anyPlayerdraw) return "draw";
+		return "no";
+	};
+
+	return {
+		init,
+		handlePosition,
+		handleClick,
+		handleReset,
+		handlePlay,
+		checkForGame,
+	};
 })();
 
 export { Model, View, Controller };
